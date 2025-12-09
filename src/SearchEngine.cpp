@@ -1,85 +1,156 @@
 #include "SearchEngine.hpp"
-#include <algorithm>
+#include "ControlCatalog.hpp"
+#include "DocumentRepository.hpp"
+#include <numeric>
+#include <sstream>
+#include <map>
+#include <set>
+#include <cmath>
 #include <cctype>
-#include <iostream>
 
-// Utility: lowercase a string
-static std::string toLower(const std::string &s) {
-    std::string out = s;
-    std::transform(out.begin(), out.end(), out.begin(),
-        [](unsigned char c){ return std::tolower(c); });
-    return out;
+SearchEngine::SearchEngine(const std::string& controlsPath, const std::string& documentsPath) {
+    ControlCatalog catalog;
+    catalog.loadFromFile(controlsPath);
+
+    for (const auto& item : catalog.getControls()) {
+        controls[item.id] = item.keywords;
+    }
+
+    DocumentRepository repo;
+    repo.loadDirectory(documentsPath);
+
+    for (const auto& [filename, content] : repo.getDocuments()) {
+        documents[filename] = content;
+    }
 }
 
-// Extract the sentence around the keyword position
-std::string SearchEngine::extractSentence(const std::string &text, size_t pos) const {
-    if (pos >= text.size()) return "";
-
-    size_t start = text.rfind('.', pos);
-    size_t end   = text.find('.', pos);
-
-    if (start == std::string::npos) start = 0;
-    else start++;
-
-    if (end == std::string::npos) end = text.size();
-
-    std::string snippet = text.substr(start, end - start);
-
-    // Trim whitespace
-    snippet.erase(snippet.begin(), std::find_if(snippet.begin(), snippet.end(),
-        [](unsigned char c){ return !std::isspace(c); }));
-
-    snippet.erase(std::find_if(snippet.rbegin(), snippet.rend(),
-        [](unsigned char c){ return !std::isspace(c); }).base(), snippet.end());
-
-    return snippet;
+std::string SearchEngine::extractSentence(const std::string& text, const std::string& keyword) const {
+    std::vector<std::string> sentences = splitIntoSentences(text);
+    for (const auto& sentence : sentences) {
+        if (sentence.find(keyword) != std::string::npos) {
+            return sentence;
+        }
+    }
+    return "";
 }
 
-std::vector<SearchResult> SearchEngine::analyze(
-    const ControlCatalog &catalog,
-    const DocumentRepository &repo)
-{
+std::vector<SearchResult> SearchEngine::analyzeQuestion(const std::string& question) const {
     std::vector<SearchResult> results;
+    std::vector<std::string> queryTokens = tokenize(toLower(question));
+    auto queryTF = computeTF(queryTokens);
+    auto idf = computeIDF();
+    auto queryTFIDF = computeTFIDF(queryTF, idf);
 
-    auto &controls = catalog.getControls();
-    auto &documents = repo.getDocuments();
-
-    for (const auto &control : controls)
-    {
+    for (const auto& [controlId, keywords] : controls) {
         SearchResult result;
-        result.controlId = control.id;
-        int totalKeywords = control.keywords.size();
-        int keywordHits = 0;
+        result.controlId = controlId;
+        result.confidence = 0.0f;
 
-        for (const auto &[fileName, text] : documents)
-        {
-            std::string lowerText = toLower(text);
-
-            for (const auto &kw : control.keywords)
-            {
-                std::string lowerKw = toLower(kw);
-
-                size_t pos = lowerText.find(lowerKw);
-                if (pos != std::string::npos)
-                {
-                    keywordHits++;
-
+        for (const auto& [docId, text] : documents) {
+            for (const auto& keyword : keywords) {
+                std::string keywordLower = toLower(keyword);
+                if (text.find(keywordLower) != std::string::npos) {
                     Evidence ev;
-                    ev.keyword = kw;
-                    ev.snippet = extractSentence(text, pos);
-                    ev.sourceFile = fileName;
-
+                    ev.keyword = keyword;
+                    ev.snippet = extractSentence(text, keywordLower);
+                    ev.sourceFile = docId;
                     result.evidence.push_back(ev);
+                    result.confidence += 1.0f;
                 }
             }
         }
+        if (!result.evidence.empty()) {
+            results.push_back(result);
+        }
+    }
+    return results;
+}
 
-        result.confidence =
-            (totalKeywords == 0) ? 0.0 :
-            static_cast<double>(keywordHits) / static_cast<double>(totalKeywords);
+std::vector<std::string> SearchEngine::tokenize(const std::string& text) const {
+    std::vector<std::string> tokens;
+    std::istringstream iss(text);
+    std::string token;
+    while (iss >> token) {
+        tokens.push_back(token);
+    }
+    return tokens;
+}
 
-        results.push_back(result);
+std::map<std::string, int> SearchEngine::computeTF(const std::vector<std::string>& tokens) const {
+    std::map<std::string, int> tf;
+    for (const auto& word : tokens) {
+        tf[word]++;
+    }
+    return tf;
+}
+
+std::map<std::string, double> SearchEngine::computeIDF() const {
+    std::map<std::string, double> idf;
+    size_t totalDocs = documents.size();
+    std::map<std::string, int> docFreq;
+
+    for (const auto& [_, text] : documents) {
+        std::set<std::string> seen;
+        for (const auto& word : tokenize(toLower(text))) {
+            seen.insert(word);
+        }
+        for (const auto& word : seen) {
+            docFreq[word]++;
+        }
     }
 
-    return results;
+    for (const auto& [word, df] : docFreq) {
+        idf[word] = log(static_cast<double>(totalDocs) / (1 + df));
+    }
+
+    return idf;
+}
+
+std::map<std::string, double> SearchEngine::computeTFIDF(
+    const std::map<std::string, int>& tf,
+    const std::map<std::string, double>& idf) const {
+
+    std::map<std::string, double> tfidf;
+    for (const auto& [word, freq] : tf) {
+        auto it = idf.find(word);
+        if (it != idf.end()) {
+            tfidf[word] = freq * it->second;
+        }
+    }
+    return tfidf;
+}
+
+double SearchEngine::computeCosineSimilarity(
+    const std::map<std::string, double>& vec1,
+    const std::map<std::string, double>& vec2) const {
+
+    double dot = 0.0, normA = 0.0, normB = 0.0;
+    for (const auto& [word, val] : vec1) {
+        dot += val * (vec2.count(word) ? vec2.at(word) : 0.0);
+        normA += val * val;
+    }
+    for (const auto& [_, val] : vec2) {
+        normB += val * val;
+    }
+    return normA && normB ? dot / (sqrt(normA) * sqrt(normB)) : 0.0;
+}
+
+std::string SearchEngine::toLower(const std::string& str) const {
+    std::string result;
+    for (char c : str) {
+        result += static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+    }
+    return result;
+}
+
+std::vector<std::string> SearchEngine::splitIntoSentences(const std::string& text) const {
+    std::vector<std::string> sentences;
+    std::istringstream iss(text);
+    std::string sentence;
+    while (std::getline(iss, sentence, '.')) {
+        if (!sentence.empty()) {
+            sentences.push_back(sentence);
+        }
+    }
+    return sentences;
 }
