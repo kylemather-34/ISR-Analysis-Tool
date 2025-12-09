@@ -1,0 +1,18 @@
+# Build output
+/build/
+/out/
+/bin/
+/Debug/
+/Release/
+
+# CMake cache
+CMakeCache.txt
+CMakeFiles/
+
+# VS Code
+.vscode/
+
+# Windows junk
+Thumbs.db
+*.user
+*.vcxproj*

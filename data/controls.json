@@ -1,0 +1,157 @@
+[
+  {
+    "id": "RA-5 001",
+    "question": "Does the organization have documented policies and procedures which establish an effective vulnerability monitoring and scanning program to regularly assess and remediate system and network vulnerabilities?",
+    "keywords": ["vulnerability", "monitoring", "scanning", "remediate", "assessment", "network"]
+  },
+  {
+    "id": "RA-5 002",
+    "question": "Does the organization analyze the results of security control assessment vulnerability scan reports?",
+    "keywords": ["vulnerability", "scan reports", "assessment", "analyze", "security control"]
+  },
+  {
+    "id": "SI-3(2)",
+    "question": "Does the organization have documented policies and procedures which establish an effective malicious code protection program to include if tools are employed and updates are automatically applied?",
+    "keywords": ["malicious code", "protection", "antivirus", "updates", "policies"]
+  },
+  {
+    "id": "SI-2",
+    "question": "Does the organization install security-relevant software updates within thirty (30) days of the release of the updates?",
+    "keywords": ["security updates", "patching", "software updates", "30 days"]
+  },
+  {
+    "id": "SI-3",
+    "question": "Does the organization address the potential impact from vulnerability scans of the information system?",
+    "keywords": ["vulnerability scan", "impact", "scanning", "assessment"]
+  },
+  {
+    "id": "SC-7",
+    "question": "Does the information system have external, internal, and DMZ security zones which are separated by firewalls?",
+    "keywords": ["firewalls", "DMZ", "zones", "network segmentation"]
+  },
+  {
+    "id": "SC-8",
+    "question": "Does the information system encrypt all information in transit?",
+    "keywords": ["encryption", "in transit", "TLS", "confidentiality"]
+  },
+  {
+    "id": "SC-28",
+    "question": "Does the information system use industry best practice encryption to protect the confidentiality of information at rest?",
+    "keywords": ["encryption", "at rest", "confidentiality", "data protection"]
+  },
+  {
+    "id": "IR-5",
+    "question": "Are information systems security incidents documented and tracked?",
+    "keywords": ["incidents", "incident tracking", "documentation"]
+  },
+  {
+    "id": "IR-4",
+    "question": "Has the organization implemented security incident handling capabilities which include preparation, detection/analysis, containment, and eradication?",
+    "keywords": ["incident response", "handling", "containment", "eradication"]
+  },
+  {
+    "id": "MP-5(4)",
+    "question": "Does the organization use encryption to protect the confidentiality and integrity of information stored on digital media during transport outside of a controlled area?",
+    "keywords": ["media encryption", "transport", "controlled area"]
+  },
+  {
+    "id": "MP-4 001",
+    "question": "Does the organization protect information system media until the media is destroyed or sanitized using approved equipment, techniques, and procedures?",
+    "keywords": ["media protection", "sanitization", "destruction"]
+  },
+  {
+    "id": "MP-4 002",
+    "question": "Is digital media physically controlled and securely stored within controlled areas?",
+    "keywords": ["controlled area", "media", "physical security"]
+  },
+  {
+    "id": "PS-1",
+    "question": "Does the organization have policies and procedures which establish an effective implementation of controls related to personnel security developed, disseminated, reviewed, and updated?",
+    "keywords": ["personnel security", "policies", "procedures"]
+  },
+  {
+    "id": "PS-4",
+    "question": "Upon termination of individual employment, does the organization terminate and/or revoke any user credentials associated with the individual?",
+    "keywords": ["termination", "offboarding", "access removal"]
+  },
+  {
+    "id": "PS-7",
+    "question": "Does the organization have documented policies and procedures established for managing personnel security compliance of applicable third-party personnel?",
+    "keywords": ["third-party", "personnel security", "policies"]
+  },
+  {
+    "id": "PE-1",
+    "question": "Does the organization have policies and procedures which establish an effective implementation of controls related to physical security developed, disseminated, reviewed, and updated?",
+    "keywords": ["physical security", "policies", "procedures"]
+  },
+  {
+    "id": "PE-6",
+    "question": "Does the organization review physical access logs periodically and upon occurrence of physical security incidents?",
+    "keywords": ["physical access logs", "review", "facility security"]
+  },
+  {
+    "id": "RA-5(1)",
+    "question": "Does the organization employ vulnerability scanning to ensure new vulnerabilities are always identified and reported?",
+    "keywords": ["vulnerability scanning", "new vulnerabilities"]
+  },
+  {
+    "id": "CM-5",
+    "question": "Within the organization, are logical access restrictions defined, documented, approved, and enforced when associated changes are made to an information system?",
+    "keywords": ["logical access", "change control", "access restrictions"]
+  },
+  {
+    "id": "CM-3(2)",
+    "question": "Does the organization document, test and validate changes to the information system before implementing on the operational environment?",
+    "keywords": ["change control", "testing", "validation"]
+  },
+  {
+    "id": "CP-9(1)",
+    "question": "Does the organization test backup information at least once a year to verify media reliability and information integrity?",
+    "keywords": ["backup testing", "integrity", "media reliability"]
+  },
+  {
+    "id": "CP-10",
+    "question": "Does the organization recover and reconstitute the information system to a known state after a disruption, compromise, or failure?",
+    "keywords": ["recovery", "continuity", "reconstitution"]
+  },
+  {
+    "id": "CP-9 001",
+    "question": "Does the organization conduct backups at a frequency consistent with organizational recovery time and recovery point objectives?",
+    "keywords": ["backups", "RTO", "RPO"]
+  },
+  {
+    "id": "CP-9 002",
+    "question": "Does the organization protect the confidentiality, integrity, and availability of backup information at all storage locations?",
+    "keywords": ["backup", "confidentiality", "integrity", "availability"]
+  },
+  {
+    "id": "IA-5 001",
+    "question": "Does the organization require that default information system authenticator content (i.e., default system credentials/passwords) are changed prior to information system installation?",
+    "keywords": ["passwords", "default credentials", "authenticator"]
+  },
+  {
+    "id": "IA-2(11) 001",
+    "question": "Does the information system support identity federation standards (SAML, OpenID, SPML, WS-Federation, Higgins, Windows CardSpace, MicroID, Liberty Alliance) as a means of authenticating/authorizing users?",
+    "keywords": ["identity federation", "SAML", "authentication"]
+  },
+  {
+    "id": "IA-5 002",
+    "question": "Does the organization implement an industry best practice password policy which includes minimum password length, password complexity, password expiration or password age, and password history?",
+    "keywords": ["password policy", "complexity", "expiration"]
+  },
+  {
+    "id": "IA-2(1) 002",
+    "question": "Is Multi-Factor Authentication required for privileged administrative account access to systems?",
+    "keywords": ["MFA", "privileged access"]
+  },
+  {
+    "id": "IA-2(1) 015",
+    "question": "Is Multi-Factor Authentication required for non-privileged account access to systems?",
+    "keywords": ["MFA", "non-privileged access"]
+  },
+  {
+    "id": "IR-1",
+    "question": "Does the organization have incident response policies and procedures which are published, reviewed and updated on a regular basis?",
+    "keywords": ["incident response", "policies", "procedures"]
+  }
+]
