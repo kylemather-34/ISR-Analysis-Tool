@@ -9,20 +9,33 @@
 #include <cctype>
 
 SearchEngine::SearchEngine(const std::string& controlsPath, const std::string& documentsPath) {
-    ControlCatalog catalog;
-    catalog.loadFromFile(controlsPath);
+    std::cout << "[DEBUG] SearchEngine constructor entered\n";
+
+    std::cout << "[DEBUG] Attempting to load controls from: " << controlsPath << "\n";
+    if (!catalog.loadFromFile(controlsPath)) {
+        std::cerr << "[ERROR] Failed to load controls from: " << controlsPath << "\n";
+    } else {
+        std::cout << "[DEBUG] Loaded controls.json with " << catalog.getControls().size() << " items\n";
+    }
 
     for (const auto& item : catalog.getControls()) {
         controls[item.id] = item.keywords;
     }
 
-    DocumentRepository repo;
-    repo.loadDirectory(documentsPath);
+    std::cout << "[DEBUG] Attempting to load documents from: " << documentsPath << "\n";
+    if (!repo.loadDirectory(documentsPath)) {
+        std::cerr << "[ERROR] Failed to load documents from: " << documentsPath << "\n";
+    } else {
+        std::cout << "[DEBUG] Loaded " << repo.getDocuments().size() << " documents\n";
+    }
 
     for (const auto& [filename, content] : repo.getDocuments()) {
         documents[filename] = content;
     }
+
+    std::cout << "[DEBUG] SearchEngine constructor finished\n";
 }
+
 
 std::string SearchEngine::extractSentence(const std::string& text, const std::string& keyword) const {
     std::vector<std::string> sentences = splitIntoSentences(text);

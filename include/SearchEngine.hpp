@@ -17,6 +17,8 @@
 #include <locale>
 #include <codecvt>
 #include <stdexcept>
+#include "ControlCatalog.hpp"
+#include "DocumentRepository.hpp"
 
 struct Evidence {
     std::string keyword;
@@ -36,8 +38,12 @@ public:
 
     std::vector<SearchResult> analyzeQuestion(const std::string& question) const;
     std::string extractSentence(const std::string& text, const std::string& keyword) const;
+    size_t getDocumentCount() const { return documents.size(); }
+
 
 private:
+    ControlCatalog catalog;
+    DocumentRepository repo;
     std::unordered_map<std::string, std::vector<std::string>> controls;
     std::unordered_map<std::string, std::string> documents;
 
