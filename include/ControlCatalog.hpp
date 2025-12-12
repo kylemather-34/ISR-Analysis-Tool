@@ -19,8 +19,7 @@ public:
     // Access all controls
     const std::vector<ControlItem>& getControls() const;
 
-    // Optional: Find a control by ID
-    std::optional<ControlItem> getById(const std::string &id) const;
+    const ControlItem* getById(const std::string &id) const;
 
 private:
     std::vector<ControlItem> controls;

@@ -19,20 +19,18 @@ int main() {
 
     std::cout << "[DEBUG] Prompting for input\n";
     std::string input;
-    std::cout << "Enter your question: ";
+    std::cout << "Enter a control ID (e.g., IA-5): ";
     std::getline(std::cin, input);
 
-    std::cout << "[DEBUG] Running analysis\n";
-    std::vector<SearchResult> analysisResults = searchEngine.analyzeQuestion(input);
+    std::cout << "[DEBUG] Running control ID analysis\n";
 
-    std::cout << "[DEBUG] Analysis complete, processing results\n";
-    for (const auto& r : analysisResults) {
-        results.addResult(r);
+    if (results.empty()) {
+        std::cout << "[INFO] No results found for control ID: " << input << "\n";
+        return 0;
     }
 
-    std::vector<SearchResult> allResults = results.getResults();
     std::cout << "[DEBUG] Outputting results\n";
-    for (const auto& res : allResults) {
+    for (const auto& res : results.getResults()) {
         std::cout << "Control ID: " << res.controlId << "\n";
         std::cout << "Confidence: " << res.confidence << "\n";
         for (const auto& ev : res.evidence) {
@@ -40,6 +38,7 @@ int main() {
             std::cout << "   Snippet: " << ev.snippet << "\n";
         }
     }
+
 
     return 0;
 }

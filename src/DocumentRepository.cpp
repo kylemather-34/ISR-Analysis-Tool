@@ -88,7 +88,7 @@ bool DocumentRepository::loadDirectory(const std::string &path) {
                 std::string text = runPdfToText(pdfFile);
 
                 if (!text.empty()) {
-                    docs.push_back({ entry.path().filename().string(), text });
+                    docs.emplace_back(entry.path().filename().string(), text);
                     std::cout << "[DEBUG] Loaded: " << entry.path().filename() << "\n";
                 } else {
                     std::cerr << "[ERROR] Empty text from: " << entry.path() << "\n";

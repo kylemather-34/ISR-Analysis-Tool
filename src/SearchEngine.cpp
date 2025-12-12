@@ -79,6 +79,48 @@ std::vector<SearchResult> SearchEngine::analyzeQuestion(const std::string& quest
     return results;
 }
 
+std::string toLower(const std::string& input) {
+    std::string output = input;
+    std::transform(output.begin(), output.end(), output.begin(), ::tolower);
+    return output;
+}
+
+std::vector<SearchResult> SearchEngine::analyzeControlId(const std::string& controlId) const {
+    const ControlItem* control = catalog.getById(controlId);
+    if (!control) {
+        std::cerr << "[ERROR] Control not found for ID: " << controlId << "\n";
+        return {};
+    }
+
+    std::vector<Evidence> foundEvidence;
+
+    for (const std::string& keyword : control->keywords) {
+        for (const auto& [docName, document] : documents) {
+            // Make lowercase versions for case-insensitive match
+            std::string loweredDoc = toLower(document);
+            std::string loweredKeyword = toLower(keyword);
+
+            size_t pos = 0;
+            while ((pos = loweredDoc.find(loweredKeyword, pos)) != std::string::npos) {
+                Evidence ev;
+                ev.keyword = keyword;
+                ev.sourceFile = docName;
+                ev.snippet = extractSentence(document, keyword); // use original-case for the snippet
+                foundEvidence.push_back(ev);
+                pos += loweredKeyword.length();
+            }
+        }
+    }
+
+    float confidence = static_cast<float>(foundEvidence.size());
+
+    return {
+        SearchResult{ controlId, confidence, foundEvidence }
+    };
+}
+
+
+
 std::vector<std::string> SearchEngine::tokenize(const std::string& text) const {
     std::vector<std::string> tokens;
     std::istringstream iss(text);
@@ -166,4 +208,16 @@ std::vector<std::string> SearchEngine::splitIntoSentences(const std::string& tex
         }
     }
     return sentences;
+}
+
+bool SearchEngine::hasControlId(const std::string& id) const {
+    return controls.find(id) != controls.end();
+}
+
+std::vector<std::string> SearchEngine::getKeywordsForControl(const std::string& id) const {
+    auto it = controls.find(id);
+    if (it != controls.end()) {
+        return it->second;
+    }
+    return {};
 }

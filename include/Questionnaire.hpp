@@ -8,6 +8,7 @@ class Questionnaire {
 public:
     void addResult(const SearchResult &result);
     const std::vector<SearchResult>& getResults() const;
+    bool empty() const { return results.empty(); }
 
 private:
     std::vector<SearchResult> results;

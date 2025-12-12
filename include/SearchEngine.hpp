@@ -39,6 +39,10 @@ public:
     std::vector<SearchResult> analyzeQuestion(const std::string& question) const;
     std::string extractSentence(const std::string& text, const std::string& keyword) const;
     size_t getDocumentCount() const { return documents.size(); }
+    bool hasControlId(const std::string& id) const;
+    std::vector<std::string> getKeywordsForControl(const std::string& id) const;
+    std::vector<SearchResult> analyzeControlId(const std::string& controlId) const;
+
 
 
 private:

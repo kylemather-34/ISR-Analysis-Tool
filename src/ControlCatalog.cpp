@@ -27,3 +27,12 @@ bool ControlCatalog::loadFromFile(const std::string &path) {
 const std::vector<ControlItem>& ControlCatalog::getControls() const {
     return controls;
 }
+
+const ControlItem* ControlCatalog::getById(const std::string& id) const {
+    for (const auto& control : controls) {
+        if (control.id == id) {
+            return &control;
+        }
+    }
+    return nullptr;
+}
